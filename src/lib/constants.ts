@@ -47,7 +47,7 @@ export const VALIDATION_LIMITS = {
     jobTitle: { min: 5, max: 200 },
     jobDescription: { min: 50, max: 10000 },
     skills: { max: 20, skillMaxLength: 50 },
-    jobSkills: { min: 1, max: 15 },
+    jobSkills: { min: 1, max: 15, skillMaxLength: 50 },
     tags: { max: 10, tagMaxLength: 30 },
     postContent: { max: 2000 },
     commentContent: { max: 500 },
