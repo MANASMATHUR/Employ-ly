@@ -1,26 +1,481 @@
 @import "tailwindcss";
+@import "./components.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Employly Brand - Hand-picked palette */
+  --ruby: #E31C58;
+  --ruby-soft: #FF6B8A;
+  --ruby-deep: #B91548;
+  --parrot: #00C853;
+  --parrot-soft: #69F0AE;
+  --parrot-deep: #00A344;
+
+  /* Warm neutrals - not pure grays */
+  --ink: #1A1518;
+  --charcoal: #2D2529;
+  --smoke: #3D3539;
+  --ash: #6B6268;
+  --stone: #9B9498;
+  --cream: #F5F0F2;
+
+  /* Accents */
+  --gold: #FFBE0B;
+  --coral: #FF6B6B;
+
+  /* Surfaces */
+  --bg: #0E0C0D;
+  --bg-raised: #171315;
+  --bg-overlay: rgba(23, 19, 21, 0.95);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--cream);
+  --font-sans: 'Inter', system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Noise texture overlay for organic feel */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Ambient background - organic, not perfect circles */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(227, 28, 88, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 85% 110%, rgba(0, 200, 83, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Scrollbar - minimal */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--smoke);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ruby);
+}
+
+/* Selection */
+::selection {
+  background: rgba(227, 28, 88, 0.25);
+  color: white;
+}
+
+/* Glass - warm tint */
+.glass {
+  background: rgba(23, 19, 21, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 107, 138, 0.08);
+}
+
+.glass-strong {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 107, 138, 0.1);
+}
+
+/* Text gradients */
+.gradient-text {
+  background: linear-gradient(135deg, var(--ruby) 0%, var(--parrot) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated gradient - subtle shift */
+.gradient-bg {
+  background: linear-gradient(135deg, var(--ruby) 0%, var(--ruby-soft) 50%, var(--parrot) 100%);
+  background-size: 300% 300%;
+  animation: shift 8s ease-in-out infinite;
+}
+
+@keyframes shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Card - organic shadows, not perfectly rounded */
+.card {
+  background: linear-gradient(165deg, var(--bg-raised) 0%, var(--bg) 100%);
+  border: 1px solid rgba(255, 107, 138, 0.06);
+  border-radius: 16px 24px 20px 18px;
+  padding: 1.5rem;
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease,
+    box-shadow 0.4s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px) rotate(-0.3deg);
+  border-color: rgba(227, 28, 88, 0.15);
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(227, 28, 88, 0.08);
+}
+
+/* Primary button - has character */
+.btn-primary {
+  background: var(--ruby);
+  color: white;
+  padding: 0.9rem 1.8rem;
+  border-radius: 10px 14px 12px 10px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 12px rgba(227, 28, 88, 0.25);
+}
+
+.btn-primary:hover {
+  background: var(--ruby-soft);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(227, 28, 88, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Secondary button */
+.btn-secondary {
+  background: transparent;
+  color: var(--cream);
+  padding: 0.9rem 1.8rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 1.5px solid var(--smoke);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--ruby);
+  color: var(--ruby-soft);
+  background: rgba(227, 28, 88, 0.05);
+}
+
+/* Success button  */
+.btn-success {
+  background: var(--parrot);
+  color: var(--ink);
+  padding: 0.9rem 1.8rem;
+  border-radius: 12px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-success:hover {
+  background: var(--parrot-soft);
+  transform: translateY(-2px);
+}
+
+/* Input - rounded but not perfectly */
+.input {
+  background: var(--bg-raised);
+  border: 1.5px solid var(--charcoal);
+  border-radius: 10px 12px 12px 10px;
+  padding: 0.9rem 1.1rem;
+  color: var(--cream);
+  width: 100%;
+  font-size: 0.9375rem;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--ruby);
+  box-shadow: 0 0 0 3px rgba(227, 28, 88, 0.12);
+}
+
+.input::placeholder {
+  color: var(--ash);
+}
+
+/* Tags - pill with slight variation */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  background: rgba(227, 28, 88, 0.08);
+  border: 1px solid rgba(227, 28, 88, 0.15);
+  border-radius: 8px 12px 10px 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ruby-soft);
+  transition: all 0.15s ease;
+}
+
+.tag:hover {
+  background: rgba(227, 28, 88, 0.12);
+  transform: translateY(-1px);
+}
+
+.tag-green {
+  background: rgba(0, 200, 83, 0.08);
+  border-color: rgba(0, 200, 83, 0.15);
+  color: var(--parrot-soft);
+}
+
+/* Score colors */
+.match-high {
+  color: var(--parrot);
+}
+
+.match-mid {
+  color: var(--gold);
+}
+
+.match-low {
+  color: var(--coral);
+}
+
+/* Slide animation - not too perfect */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) rotate(0.5deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+.animate-in {
+  animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Stagger - varied timing */
+.stagger>*:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.stagger>*:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.stagger>*:nth-child(3) {
+  animation-delay: 0.22s;
+}
+
+.stagger>*:nth-child(4) {
+  animation-delay: 0.28s;
+}
+
+.stagger>*:nth-child(5) {
+  animation-delay: 0.36s;
+}
+
+.stagger>* {
+  opacity: 0;
+  animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Spinner */
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--charcoal);
+  border-top-color: var(--ruby);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--ruby);
+  outline-offset: 3px;
+}
+
+/* Typography - varied hierarchy */
+h1 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+h2 {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+/* Blob shapes - organic movement */
+.blob {
+  position: absolute;
+  border-radius: 42% 58% 70% 30% / 45% 55% 45% 55%;
+  filter: blur(60px);
+  animation: morph 15s ease-in-out infinite alternate;
+}
+
+@keyframes morph {
+  0% {
+    border-radius: 42% 58% 70% 30% / 45% 55% 45% 55%;
+    transform: rotate(0deg) scale(1);
+  }
+
+  33% {
+    border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+  }
+
+  66% {
+    border-radius: 30% 70% 70% 30% / 50% 40% 60% 50%;
+  }
+
+  100% {
+    border-radius: 58% 42% 30% 70% / 55% 45% 55% 45%;
+    transform: rotate(5deg) scale(1.05);
+  }
+}
+
+.blob-ruby {
+  background: rgba(227, 28, 88, 0.15);
+  width: 450px;
+  height: 450px;
+}
+
+.blob-green {
+  background: rgba(0, 200, 83, 0.1);
+  width: 350px;
+  height: 350px;
+  animation-delay: -5s;
+}
+
+/* Avatar with ring - slightly off-center */
+.avatar-ring {
+  padding: 2px;
+  background: linear-gradient(135deg, var(--ruby), var(--parrot));
+  border-radius: 50%;
+  transform: rotate(-3deg);
+}
+
+/* Section break - hand-drawn feel */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      var(--smoke) 20%,
+      var(--ruby) 50%,
+      var(--smoke) 80%,
+      transparent 100%);
+  opacity: 0.4;
+  margin: 4rem 0;
+}
+
+/* Highlight marker effect */
+.highlight {
+  background: linear-gradient(120deg, transparent 0%, transparent 50%, rgba(227, 28, 88, 0.15) 50%, rgba(227, 28, 88, 0.15) 100%);
+  background-size: 220% 100%;
+  background-position: 100% 50%;
+  transition: background-position 0.4s ease;
+  padding: 0 0.25em;
+  border-radius: 2px;
+}
+
+.highlight:hover {
+  background-position: 0% 50%;
+}
+
+/* Quote block */
+.callout {
+  border-left: 3px solid var(--ruby);
+  padding-left: 1.25rem;
+  margin-left: -1.25rem;
+  font-style: italic;
+  color: var(--stone);
+}
+
+/* Handwritten underline */
+.underline-sketch {
+  position: relative;
+  display: inline-block;
+}
+
+.underline-sketch::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  right: -4px;
+  height: 8px;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,5 Q25,0 50,5 T100,5' stroke='%23E31C58' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center;
+  background-size: 100% 100%;
+  opacity: 0.6;
+}
+
+/* Floating label */
+.label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ash);
 }
