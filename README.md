@@ -114,4 +114,4 @@ Get testnet MATIC: [Polygon Faucet](https://faucet.polygon.technology/)
 
 ---
 
-Built with ❤️ using Next.js, MongoDB, OpenAI, and Polygon
+
