@@ -19,6 +19,8 @@ export const updateProfileSchema = z.object({
     skills: z.array(z.string().max(50)).max(20).optional(),
     linkedinUrl: z.string().url().optional().or(z.literal('')),
     walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address').optional().or(z.literal('')),
+    avatarUrl: z.string().url().optional().or(z.literal('')),
+    isRecruiter: z.boolean().optional(),
 });
 
 // ============ Job Schemas ============
