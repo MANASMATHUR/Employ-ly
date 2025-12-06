@@ -3,15 +3,22 @@ import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
 import { AUTH_CONFIG } from './constants';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET_RAW = process.env.JWT_SECRET;
 
-if (!JWT_SECRET && AUTH_CONFIG.jwtSecretRequired) {
+if (!JWT_SECRET_RAW && AUTH_CONFIG.jwtSecretRequired) {
     throw new Error('JWT_SECRET environment variable is required. Please set it in your .env.local file.');
 }
 
-if (JWT_SECRET && JWT_SECRET.length < 32) {
+if (process.env.NODE_ENV === 'production' && JWT_SECRET_RAW && JWT_SECRET_RAW.length < 32) {
     console.warn('Warning: JWT_SECRET should be at least 32 characters long for security.');
 }
+
+// Ensure JWT_SECRET is a string (required for jwt.sign)
+if (!JWT_SECRET_RAW) {
+    throw new Error('JWT_SECRET must be defined');
+}
+
+const JWT_SECRET: string = JWT_SECRET_RAW;
 
 export interface JWTPayload {
     userId: string;
