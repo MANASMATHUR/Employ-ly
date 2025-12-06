@@ -70,7 +70,6 @@ const UserSchema = new Schema<IUser>(
 
 // Index for faster queries
 UserSchema.index({ skills: 1 });
-UserSchema.index({ email: 1 });
 
 // Prevent model recompilation in development
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
