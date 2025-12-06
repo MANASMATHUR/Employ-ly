@@ -4,9 +4,10 @@ import Job from '@/models/Job';
 import User from '@/models/User';
 import { getUserFromRequest } from '@/lib/auth';
 import { calculateMatchScore } from '@/lib/ai';
-import { formatErrorResponse, logger, NotFoundError, AuthenticationError, AuthorizationError } from '@/lib/errors';
+import { formatErrorResponse, logger, NotFoundError, AuthenticationError, AuthorizationError, ValidationError } from '@/lib/errors';
 import { sanitizeInput, sanitizeStringArray } from '@/lib/sanitize';
 import { VALIDATION_LIMITS } from '@/lib/constants';
+import { updateJobSchema, validateRequest } from '@/lib/validations';
 import mongoose from 'mongoose';
 
 // GET - Get single job by ID
@@ -92,17 +93,24 @@ export async function PUT(
         }
 
         const body = await request.json();
-        const { title, description, requiredSkills, budget, location, locationType, tags, status } = body;
+
+        // Validate input
+        const validation = validateRequest(updateJobSchema, body);
+        if (!validation.success) {
+            throw new ValidationError(validation.error);
+        }
+
+        const { title, description, requiredSkills, budget, location, locationType, tags, status } = validation.data;
 
         const updateData: Record<string, any> = {};
-        if (title) updateData.title = sanitizeInput(title, VALIDATION_LIMITS.jobTitle.max);
-        if (description) updateData.description = sanitizeInput(description, VALIDATION_LIMITS.jobDescription.max);
-        if (requiredSkills) updateData.requiredSkills = sanitizeStringArray(requiredSkills, VALIDATION_LIMITS.jobSkills.skillMaxLength);
-        if (budget) updateData.budget = budget;
-        if (location) updateData.location = sanitizeInput(location, 100);
-        if (locationType) updateData.locationType = locationType;
-        if (tags) updateData.tags = sanitizeStringArray(tags, VALIDATION_LIMITS.tags.tagMaxLength);
-        if (status) updateData.status = status;
+        if (title !== undefined) updateData.title = sanitizeInput(title, VALIDATION_LIMITS.jobTitle.max);
+        if (description !== undefined) updateData.description = sanitizeInput(description, VALIDATION_LIMITS.jobDescription.max);
+        if (requiredSkills !== undefined) updateData.requiredSkills = sanitizeStringArray(requiredSkills, VALIDATION_LIMITS.jobSkills.skillMaxLength);
+        if (budget !== undefined) updateData.budget = budget;
+        if (location !== undefined) updateData.location = sanitizeInput(location, 100);
+        if (locationType !== undefined) updateData.locationType = locationType;
+        if (tags !== undefined) updateData.tags = sanitizeStringArray(tags, VALIDATION_LIMITS.tags.tagMaxLength);
+        if (status !== undefined) updateData.status = status;
 
         const updatedJob = await Job.findByIdAndUpdate(
             id,

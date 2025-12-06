@@ -10,6 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("http://localhost:3000"),
   title: "Employly - AI-Powered Job Matching & Web3 Networking",
   description: "Find your dream job with AI-powered matching, showcase your skills, and connect with opportunities using blockchain-verified payments.",
   keywords: ["jobs", "networking", "Web3", "blockchain", "AI", "career", "employment", "hiring"],

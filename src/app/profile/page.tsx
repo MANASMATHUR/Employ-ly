@@ -38,7 +38,7 @@ export default function ProfilePage() {
             const res = await fetch('/api/profile', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ ...form, walletAddress: address }),
+                body: JSON.stringify({ ...form, walletAddress: address || undefined }),
             });
             const data = await res.json();
             if (data.success) {
@@ -106,8 +106,8 @@ export default function ProfilePage() {
 
     return (
         <div className="min-h-screen py-10 relative">
-            <div className="blob blob-ruby -top-48 right-20 opacity-30"></div>
-            <div className="blob blob-green -bottom-32 -left-20 opacity-20"></div>
+            <div className="blob blob-ruby -top-48 right-20 opacity-5"></div>
+            <div className="blob blob-green -bottom-32 -left-20 opacity-5"></div>
 
             <div className="max-w-3xl mx-auto px-5 sm:px-8">
                 {/* Profile Header */}
@@ -118,11 +118,13 @@ export default function ProfilePage() {
                             <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ruby)] to-[var(--parrot)] flex items-center justify-center text-white text-2xl font-bold">
                                 {form.name.charAt(0) || 'U'}
                             </div>
+                            {/* Connected Indicator
                             {isConnected && (
                                 <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[var(--parrot)] flex items-center justify-center border-2 border-[var(--bg-card)]">
                                     <span className="text-[10px]">⚡</span>
                                 </div>
                             )}
+                            */}
                         </div>
 
                         {/* Info */}
@@ -168,7 +170,7 @@ export default function ProfilePage() {
                     </div>
                 </div>
 
-                {/* Stats */}
+                {/* Stats - Hidden until real data is available
                 <div className="grid grid-cols-3 gap-4 mb-6">
                     <div className="stat-card">
                         <div className="stat-value">12</div>
@@ -183,6 +185,7 @@ export default function ProfilePage() {
                         <div className="stat-label">Avg Match</div>
                     </div>
                 </div>
+                */}
 
                 {/* Bio Section */}
                 <div className="card mb-6">

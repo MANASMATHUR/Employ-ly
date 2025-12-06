@@ -15,7 +15,7 @@ export const loginSchema = z.object({
 // ============ Profile Schemas ============
 export const updateProfileSchema = z.object({
     name: z.string().min(2).max(100).optional(),
-    bio: z.string().max(1000).optional(),
+    bio: z.string().max(2000).optional(),
     skills: z.array(z.string().max(50)).max(20).optional(),
     linkedinUrl: z.string().url().optional().or(z.literal('')),
     walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address').optional().or(z.literal('')),
@@ -37,6 +37,21 @@ export const createJobSchema = z.object({
     locationType: z.enum(['remote', 'hybrid', 'onsite']),
     tags: z.array(z.string().max(30)).max(10).optional(),
     paymentTxHash: z.string().regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid transaction hash'),
+});
+
+export const updateJobSchema = z.object({
+    title: z.string().min(5, 'Title must be at least 5 characters').max(200).optional(),
+    description: z.string().min(50, 'Description must be at least 50 characters').max(10000).optional(),
+    requiredSkills: z.array(z.string().max(50)).min(1, 'At least one skill required').max(15).optional(),
+    budget: z.object({
+        min: z.number().min(0),
+        max: z.number().min(0),
+        currency: z.enum(['USD', 'EUR', 'INR', 'GBP']),
+    }).optional(),
+    location: z.string().min(2).max(100).optional(),
+    locationType: z.enum(['remote', 'hybrid', 'onsite']).optional(),
+    tags: z.array(z.string().max(30)).max(10).optional(),
+    status: z.enum(['active', 'closed', 'draft']).optional(),
 });
 
 export const applyJobSchema = z.object({
@@ -88,6 +103,7 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type CreateJobInput = z.infer<typeof createJobSchema>;
+export type UpdateJobInput = z.infer<typeof updateJobSchema>;
 export type CreatePostInput = z.infer<typeof createPostSchema>;
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
 export type JobFilterInput = z.infer<typeof jobFilterSchema>;

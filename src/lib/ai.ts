@@ -3,9 +3,10 @@ import OpenAI from 'openai';
 // Lazy-load OpenAI client to avoid build-time errors
 let openai: OpenAI | null = null;
 export function getOpenAI(): OpenAI | null {
-    if (!process.env.OPENAI_API_KEY) return null;
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) return null;
     if (!openai) {
-        openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        openai = new OpenAI({ apiKey });
     }
     return openai;
 }
