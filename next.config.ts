@@ -50,6 +50,11 @@ const nextConfig: NextConfig = {
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
+
+  // Turbopack configuration to silence lockfile warning
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;
