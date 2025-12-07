@@ -7,7 +7,7 @@ import { checkRateLimit } from '@/lib/rateLimit';
 import { logger } from '@/lib/errors';
 
 export async function POST(request: NextRequest) {
-    // Rate limiting for auth endpoints (10 requests per minute)
+
     const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown';
     const rateLimit = checkRateLimit(`register:${clientIp}`, { windowMs: 60000, maxRequests: 10 });
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        // Validate input with Zod
+
         const validation = validateRequest(registerSchema, body);
         if (!validation.success) {
             return NextResponse.json(
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
         await connectDB();
 
-        // Check if user exists
+
         const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return NextResponse.json(
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Hash password and create user
+
         const hashedPassword = await hashPassword(password);
         const user = await User.create({
             email: email.toLowerCase(),
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
         logger.info('User registered', { userId: user._id.toString(), email: user.email });
 
-        // Create JWT token
+
         const token = createToken({
             userId: user._id.toString(),
             email: user.email,
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     } catch (error: unknown) {
         logger.error('Registration error', error as Error);
 
-        // Handle MongoDB duplicate key error
+
         if ((error as { code?: number }).code === 11000) {
             return NextResponse.json(
                 { success: false, error: 'An account with this email already exists' },

@@ -50,7 +50,7 @@ export default function JobCard({ job, showMatchScore = true }: JobCardProps) {
             <div className="card group cursor-pointer">
                 <div className="flex flex-col sm:flex-row sm:items-start gap-5">
                     <div className="flex-1 min-w-0">
-                        {/* Title row */}
+
                         <div className="flex items-start justify-between gap-3 mb-3">
                             <h3 className="text-lg font-semibold text-[var(--cream)] group-hover:text-[var(--ruby-soft)] transition-colors truncate">
                                 {job.title}
@@ -60,7 +60,7 @@ export default function JobCard({ job, showMatchScore = true }: JobCardProps) {
                             </span>
                         </div>
 
-                        {/* Meta */}
+
                         <div className="flex items-center gap-2 text-xs text-[var(--ash)] mb-4">
                             <span className="flex items-center gap-1.5">
                                 <span className="w-5 h-5 rounded-md bg-gradient-to-br from-[var(--ruby)] to-[var(--parrot)] flex items-center justify-center text-[10px] text-white font-medium">
@@ -74,12 +74,12 @@ export default function JobCard({ job, showMatchScore = true }: JobCardProps) {
                             <span className="capitalize">{job.locationType}</span>
                         </div>
 
-                        {/* Description */}
+
                         <p className="text-[var(--stone)] text-sm line-clamp-2 mb-4">
                             {job.description}
                         </p>
 
-                        {/* Skills */}
+
                         <div className="flex flex-wrap gap-1.5">
                             {job.requiredSkills.slice(0, 4).map((skill) => (
                                 <span key={skill} className="tag text-xs py-1 px-2">{skill}</span>
@@ -90,7 +90,7 @@ export default function JobCard({ job, showMatchScore = true }: JobCardProps) {
                         </div>
                     </div>
 
-                    {/* Match score */}
+
                     {showMatchScore && job.matchScore !== undefined && (
                         <div className="sm:w-24 flex-shrink-0 pt-2 sm:pt-0">
                             <MatchScore score={job.matchScore} />

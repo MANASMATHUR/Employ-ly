@@ -1,6 +1,6 @@
 // Shared TypeScript types for the application
 
-// ============ User Types ============
+
 export interface User {
     id: string;
     _id?: string;
@@ -22,7 +22,7 @@ export interface AuthPayload {
     exp?: number;
 }
 
-// ============ Job Types ============
+
 export interface Job {
     _id: string;
     title: string;
@@ -73,7 +73,7 @@ export interface MatchData {
     recommendation: string;
 }
 
-// ============ Feed Types ============
+
 export interface Post {
     _id: string;
     content: string;
@@ -98,7 +98,7 @@ export interface Comment {
     createdAt: string;
 }
 
-// ============ External Job Types ============
+
 export interface ExternalJob {
     _id: string;
     title: string;
@@ -115,7 +115,7 @@ export interface ExternalJob {
     companyLogo?: string;
 }
 
-// ============ Scraped Job Types (ML) ============
+
 export interface ScrapedJob {
     _id: string;
     sourceId: string;
@@ -155,7 +155,7 @@ export interface ScrapedJob {
     updatedAt: Date;
 }
 
-// ============ API Response Types ============
+
 export interface ApiResponse<T = unknown> {
     success: boolean;
     data?: T;
@@ -172,7 +172,7 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
     };
 }
 
-// ============ Web3 Types ============
+
 export interface TransactionResult {
     success: boolean;
     txHash?: string;
@@ -186,7 +186,7 @@ export interface WalletState {
     chainId: number | null;
 }
 
-// ============ Interview Prep Types ============
+
 export interface InterviewQuestion {
     question: string;
     type: 'behavioral' | 'technical' | 'situational';

@@ -1,4 +1,4 @@
-// Centralized error handling utilities
+
 
 export class AppError extends Error {
     constructor(
@@ -11,7 +11,7 @@ export class AppError extends Error {
     }
 }
 
-// Common error types
+
 export class ValidationError extends AppError {
     constructor(message: string) {
         super(message, 400, 'VALIDATION_ERROR');
@@ -48,7 +48,7 @@ export class RateLimitError extends AppError {
     }
 }
 
-// Error response formatter
+
 export function formatErrorResponse(error: unknown): { message: string; code?: string; statusCode: number } {
     if (error instanceof AppError) {
         return {
@@ -61,7 +61,7 @@ export function formatErrorResponse(error: unknown): { message: string; code?: s
     if (error instanceof Error) {
         // Don't expose internal error messages in production
         const isProduction = process.env.NODE_ENV === 'production';
-        
+
         // Handle common error types
         if (error.name === 'ValidationError' || error.message.includes('validation')) {
             return {
@@ -91,7 +91,7 @@ export function formatErrorResponse(error: unknown): { message: string; code?: s
     };
 }
 
-// Async error wrapper for API routes
+
 export function withErrorHandler<T>(
     handler: (...args: any[]) => Promise<T>
 ): (...args: any[]) => Promise<T | Response> {
@@ -114,7 +114,7 @@ export function withErrorHandler<T>(
     };
 }
 
-// Logger utility
+
 export const logger = {
     info: (message: string, data?: object) => {
         console.log(`[INFO] ${new Date().toISOString()} - ${message}`, data || '');

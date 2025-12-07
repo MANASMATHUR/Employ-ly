@@ -6,16 +6,16 @@
 export function sanitizeHtml(html: string): string {
     if (!html) return '';
 
-    // Remove script tags and their content
+
     let sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-    // Remove event handlers (onclick, onerror, etc.)
+
     sanitized = sanitized.replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '');
 
-    // Remove javascript: protocol
+
     sanitized = sanitized.replace(/javascript:/gi, '');
 
-    // Remove data: URLs that could be used for XSS
+
     sanitized = sanitized.replace(/data:text\/html/gi, '');
 
     return sanitized.trim();
@@ -27,7 +27,7 @@ export function sanitizeHtml(html: string): string {
 export function sanitizeText(text: string): string {
     if (!text) return '';
 
-    // Remove HTML tags
+
     return text.replace(/<[^>]*>/g, '').trim();
 }
 
@@ -39,13 +39,13 @@ export function sanitizeInput(input: string, maxLength?: number): string {
 
     let sanitized = input.trim();
 
-    // Remove null bytes
+
     sanitized = sanitized.replace(/\0/g, '');
 
-    // Remove control characters except newlines and tabs
+
     sanitized = sanitized.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
 
-    // Apply length limit if specified
+
     if (maxLength && sanitized.length > maxLength) {
         sanitized = sanitized.substring(0, maxLength);
     }
@@ -70,7 +70,7 @@ export function sanitizeUrl(url: string): string {
 
     try {
         const parsed = new URL(url);
-        // Only allow http and https protocols
+
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
             return '';
         }
@@ -86,10 +86,10 @@ export function sanitizeUrl(url: string): string {
 export function sanitizeWalletAddress(address: string): string {
     if (!address) return '';
 
-    // Remove whitespace and convert to lowercase
+
     const sanitized = address.trim().toLowerCase();
 
-    // Validate Ethereum address format
+
     if (!/^0x[a-f0-9]{40}$/.test(sanitized)) {
         return '';
     }
@@ -105,7 +105,7 @@ export function sanitizeTxHash(hash: string): string {
 
     const sanitized = hash.trim().toLowerCase();
 
-    // Validate transaction hash format
+
     if (!/^0x[a-f0-9]{64}$/.test(sanitized)) {
         return '';
     }
