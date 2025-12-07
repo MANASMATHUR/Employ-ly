@@ -18,16 +18,36 @@ export const POLYGON_MUMBAI_CONFIG = {
 export const PLATFORM_FEE = '0.00001';
 export const ADMIN_WALLET = process.env.NEXT_PUBLIC_ADMIN_WALLET || '';
 
+interface EthereumProvider {
+    request: (args: { method: string; params?: any[] }) => Promise<any>;
+    on: (event: string, callback: any) => void;
+    removeListener: (event: string, callback: any) => void;
+    isMetaMask?: boolean;
+}
+
 // Check if MetaMask is installed
 export function isMetaMaskInstalled(): boolean {
     if (typeof window === 'undefined') return false;
-    return typeof (window as any).ethereum !== 'undefined';
+    return typeof (window as unknown as { ethereum: EthereumProvider }).ethereum !== 'undefined';
 }
 
 // Get MetaMask provider
 export function getProvider(): ethers.providers.Web3Provider | null {
     if (!isMetaMaskInstalled()) return null;
-    return new ethers.providers.Web3Provider((window as any).ethereum);
+    return new ethers.providers.Web3Provider((window as unknown as { ethereum: any }).ethereum);
+}
+// Listen for account changes
+export function onAccountsChanged(callback: (accounts: string[]) => void): void {
+    if (isMetaMaskInstalled()) {
+        (window as unknown as { ethereum: EthereumProvider }).ethereum.on('accountsChanged', callback);
+    }
+}
+
+// Listen for chain changes
+export function onChainChanged(callback: (chainId: string) => void): void {
+    if (isMetaMaskInstalled()) {
+        (window as unknown as { ethereum: EthereumProvider }).ethereum.on('chainChanged', callback);
+    }
 }
 
 // Connect wallet and get address
@@ -52,16 +72,19 @@ export async function switchToPolygonMumbai(): Promise<boolean> {
     if (!isMetaMaskInstalled()) return false;
 
     try {
-        await (window as any).ethereum.request({
+        const ethereum = (window as unknown as { ethereum: EthereumProvider }).ethereum;
+        await ethereum.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: POLYGON_MUMBAI_CONFIG.chainIdHex }],
         });
         return true;
-    } catch (switchError: any) {
+    } catch (switchError: unknown) {
         // Network not added, try to add it
-        if (switchError.code === 4902) {
+        const error = switchError as { code: number };
+        if (error.code === 4902) {
             try {
-                await (window as any).ethereum.request({
+                const ethereum = (window as unknown as { ethereum: EthereumProvider }).ethereum;
+                await ethereum.request({
                     method: 'wallet_addEthereumChain',
                     params: [
                         {
@@ -97,7 +120,8 @@ export async function sendPlatformFee(): Promise<{ success: boolean; txHash?: st
         }
 
         const signer = provider.getSigner();
-        const address = await signer.getAddress();
+        // Address not needed for sending transaction from signer context
+
 
         // Ensure we're on the right network
         const network = await provider.getNetwork();
@@ -121,11 +145,11 @@ export async function sendPlatformFee(): Promise<{ success: boolean; txHash?: st
             success: true,
             txHash: receipt.transactionHash,
         };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Payment error:', error);
         return {
             success: false,
-            error: error.message || 'Transaction failed',
+            error: error instanceof Error ? error.message : 'Transaction failed',
         };
     }
 }
@@ -150,16 +174,12 @@ export async function getCurrentChainId(): Promise<number | null> {
     return network.chainId;
 }
 
-// Listen for account changes
-export function onAccountsChanged(callback: (accounts: string[]) => void): void {
-    if (isMetaMaskInstalled()) {
-        (window as any).ethereum.on('accountsChanged', callback);
-    }
-}
-
-// Listen for chain changes
-export function onChainChanged(callback: (chainId: string) => void): void {
-    if (isMetaMaskInstalled()) {
-        (window as any).ethereum.on('chainChanged', callback);
+// Verify a signed message
+export function verifyMessage(message: string, signature: string): string {
+    try {
+        return ethers.utils.verifyMessage(message, signature);
+    } catch (error) {
+        console.error('Error verifying message:', error);
+        return '';
     }
 }

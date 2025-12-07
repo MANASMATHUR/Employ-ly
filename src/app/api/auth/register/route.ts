@@ -4,7 +4,7 @@ import User from '@/models/User';
 import { hashPassword, createToken } from '@/lib/auth';
 import { registerSchema, validateRequest } from '@/lib/validations';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { logger, ConflictError } from '@/lib/errors';
+import { logger } from '@/lib/errors';
 
 export async function POST(request: NextRequest) {
     // Rate limiting for auth endpoints (10 requests per minute)
@@ -72,11 +72,11 @@ export async function POST(request: NextRequest) {
                 skills: user.skills || [],
             },
         });
-    } catch (error: any) {
-        logger.error('Registration error', error);
+    } catch (error: unknown) {
+        logger.error('Registration error', error as Error);
 
         // Handle MongoDB duplicate key error
-        if (error.code === 11000) {
+        if ((error as { code?: number }).code === 11000) {
             return NextResponse.json(
                 { success: false, error: 'An account with this email already exists' },
                 { status: 409 }

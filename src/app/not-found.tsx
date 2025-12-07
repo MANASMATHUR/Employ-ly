@@ -23,7 +23,7 @@ export default function NotFound() {
                     Lost in space
                 </h1>
                 <p className="text-[var(--ash)] mb-8 max-w-sm mx-auto">
-                    The page you're looking for doesn't exist or has been moved to a different galaxy.
+                    The page you&apos;re looking for doesn&apos;t exist or has been moved to a different galaxy.
                 </p>
 
                 {/* Actions */}

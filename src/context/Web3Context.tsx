@@ -37,18 +37,25 @@ export function Web3Provider({ children }: { children: ReactNode }) {
     const isCorrectNetwork = chainId === POLYGON_MUMBAI_CONFIG.chainId;
 
     useEffect(() => {
-        setIsMetaMaskAvailable(isMetaMaskInstalled());
+        const checkMetaMask = isMetaMaskInstalled();
+        if (checkMetaMask !== isMetaMaskAvailable) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setIsMetaMaskAvailable(checkMetaMask);
+        }
 
         // Check for existing connection
         const checkConnection = async () => {
-            if (isMetaMaskInstalled()) {
+            if (checkMetaMask) {
                 try {
-                    const accounts = await (window as any).ethereum.request({ method: 'eth_accounts' });
-                    if (accounts.length > 0) {
-                        setAddress(accounts[0]);
+                    const ethereum = (window as unknown as { ethereum: { request: (args: { method: string }) => Promise<string[]> } }).ethereum;
+                    if (ethereum) {
+                        const accounts = await ethereum.request({ method: 'eth_accounts' });
+                        if (accounts.length > 0) {
+                            setAddress(accounts[0]);
+                        }
+                        const currentChainId = await getCurrentChainId();
+                        setChainId(currentChainId);
                     }
-                    const currentChainId = await getCurrentChainId();
-                    setChainId(currentChainId);
                 } catch (error) {
                     console.error('Error checking connection:', error);
                 }
@@ -58,8 +65,8 @@ export function Web3Provider({ children }: { children: ReactNode }) {
         checkConnection();
 
         // Set up listeners
-        if (isMetaMaskInstalled()) {
-            onAccountsChanged((accounts) => {
+        if (checkMetaMask) {
+            onAccountsChanged((accounts: string[]) => {
                 if (accounts.length > 0) {
                     setAddress(accounts[0]);
                 } else {
@@ -67,11 +74,11 @@ export function Web3Provider({ children }: { children: ReactNode }) {
                 }
             });
 
-            onChainChanged((chainIdHex) => {
+            onChainChanged((chainIdHex: string) => {
                 setChainId(parseInt(chainIdHex, 16));
             });
         }
-    }, []);
+    }, [isMetaMaskAvailable]);
 
     const connect = useCallback(async () => {
         const connectedAddress = await connectWallet();

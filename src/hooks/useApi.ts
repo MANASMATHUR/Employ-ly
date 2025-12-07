@@ -3,15 +3,15 @@
 import { useState, useCallback } from 'react';
 import { useToast } from '@/lib/toast';
 
-interface UseApiOptions {
+interface UseApiOptions<T> {
     showSuccessToast?: boolean;
     showErrorToast?: boolean;
     successMessage?: string;
-    onSuccess?: (data: any) => void;
+    onSuccess?: (data: T) => void;
     onError?: (error: string) => void;
 }
 
-export function useApi<T = any>(options: UseApiOptions = {}) {
+export function useApi<T = unknown>(options: UseApiOptions<T> = {}) {
     const {
         showSuccessToast = false,
         showErrorToast = true,
@@ -27,7 +27,7 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
 
     const execute = useCallback(async (
         apiCall: () => Promise<Response>,
-        customOptions?: Partial<UseApiOptions>
+        customOptions?: Partial<UseApiOptions<T>>
     ) => {
         const opts = { ...options, ...customOptions };
         setIsLoading(true);
@@ -40,24 +40,24 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
             if (!response.ok) {
                 const errorMessage = result.error || result.message || 'An error occurred';
                 setError(errorMessage);
-                
+
                 if (opts.showErrorToast) {
                     toast.error(errorMessage);
                 }
-                
+
                 if (opts.onError) {
                     opts.onError(errorMessage);
                 }
-                
+
                 return { success: false, error: errorMessage, data: null };
             }
 
             setData(result.data || result);
-            
+
             if (opts.showSuccessToast) {
                 toast.success(opts.successMessage || 'Operation completed successfully');
             }
-            
+
             if (opts.onSuccess) {
                 opts.onSuccess(result.data || result);
             }
@@ -66,11 +66,11 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
             setError(errorMessage);
-            
+
             if (opts.showErrorToast) {
                 toast.error(errorMessage);
             }
-            
+
             if (opts.onError) {
                 opts.onError(errorMessage);
             }

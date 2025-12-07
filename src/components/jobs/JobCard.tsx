@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import MatchScore from '@/components/ai/MatchScore';
 
 interface JobCardProps {
@@ -30,13 +31,19 @@ export default function JobCard({ job, showMatchScore = true }: JobCardProps) {
         return `${job.budget.currency} ${job.budget.min.toLocaleString()}–${job.budget.max.toLocaleString()}`;
     };
 
-    const timeAgo = (date: string) => {
-        const days = Math.floor((Date.now() - new Date(date).getTime()) / 86400000);
-        if (days === 0) return 'Today';
-        if (days === 1) return 'Yesterday';
-        if (days < 7) return `${days}d ago`;
-        return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    };
+    const [timeDisplay, setTimeDisplay] = useState<string>('');
+
+    useEffect(() => {
+        const calculateTimeAgo = () => {
+            const days = Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 86400000);
+            if (days === 0) return 'Today';
+            if (days === 1) return 'Yesterday';
+            if (days < 7) return `${days}d ago`;
+            return new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setTimeDisplay(calculateTimeAgo());
+    }, [job.createdAt]);
 
     return (
         <Link href={`/jobs/${job._id}`}>
@@ -62,7 +69,7 @@ export default function JobCard({ job, showMatchScore = true }: JobCardProps) {
                                 {job.poster.name}
                             </span>
                             <span className="text-[var(--smoke)]">·</span>
-                            <span>{timeAgo(job.createdAt)}</span>
+                            <span>{timeDisplay}</span>
                             <span className="text-[var(--smoke)]">·</span>
                             <span className="capitalize">{job.locationType}</span>
                         </div>

@@ -7,7 +7,7 @@ import { useWeb3 } from '@/context/Web3Context';
 import { useState } from 'react';
 
 export default function Navbar() {
-    const { user, logout } = useAuth();
+    const { user, logout, isLoading } = useAuth();
     const { address, isConnected, connect, isCorrectNetwork, switchNetwork, isMetaMaskAvailable } = useWeb3();
     const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -77,7 +77,9 @@ export default function Navbar() {
                         )}
 
                         {/* Auth */}
-                        {user ? (
+                        {isLoading ? (
+                            <div className="w-8 h-8 rounded-full bg-[var(--charcoal)] animate-pulse"></div>
+                        ) : user ? (
                             <div className="flex items-center gap-3">
                                 <Link href="/profile" className="flex items-center gap-2 group">
                                     <div className="avatar-ring">
@@ -123,7 +125,9 @@ export default function Navbar() {
                         <div className="flex flex-col gap-3">
                             <Link href="/jobs" className="text-[var(--stone)] hover:text-[var(--cream)] py-2 font-medium">Jobs</Link>
                             <Link href="/feed" className="text-[var(--stone)] hover:text-[var(--cream)] py-2 font-medium">Community</Link>
-                            {user ? (
+                            {isLoading ? (
+                                <div className="w-20 h-6 bg-[var(--charcoal)] animate-pulse rounded"></div>
+                            ) : user ? (
                                 <>
                                     <Link href="/jobs/create" className="text-[var(--stone)] hover:text-[var(--cream)] py-2 font-medium">Post job</Link>
                                     <Link href="/profile" className="text-[var(--stone)] hover:text-[var(--cream)] py-2 font-medium">Profile</Link>

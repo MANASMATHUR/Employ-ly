@@ -69,7 +69,7 @@ function generateQuestions(jobSkills: string[], jobDescription: string, userSkil
     for (const skill of jobSkills.slice(0, 3)) {
         const skillLower = skill.toLowerCase();
         for (const [key, templates] of Object.entries(QUESTION_TEMPLATES.technical)) {
-            if (skillLower.includes(key) && !usedSkills.has(key)) {
+            if (skillLower.includes(key) && !usedSkills.has(key) && templates.length > 0) {
                 const template = templates[Math.floor(Math.random() * templates.length)];
                 questions.push({
                     question: template.q,
@@ -93,10 +93,12 @@ function generateQuestions(jobSkills: string[], jobDescription: string, userSkil
 
     // Add behavioral questions
     const behavioral = QUESTION_TEMPLATES.behavioral;
-    const b1 = behavioral[Math.floor(Math.random() * behavioral.length)];
-    const b2 = behavioral[Math.floor(Math.random() * behavioral.length)];
-    questions.push({ question: b1.q, type: 'behavioral', tip: b1.tip });
-    questions.push({ question: b2.q, type: 'behavioral', tip: b2.tip });
+    if (behavioral.length > 0) {
+        const b1 = behavioral[Math.floor(Math.random() * behavioral.length)];
+        const b2 = behavioral[Math.floor(Math.random() * behavioral.length)];
+        questions.push({ question: b1.q, type: 'behavioral', tip: b1.tip });
+        questions.push({ question: b2.q, type: 'behavioral', tip: b2.tip });
+    }
 
     // Add situational based on skill gaps
     const missingSkills = jobSkills.filter(js =>
@@ -110,8 +112,11 @@ function generateQuestions(jobSkills: string[], jobDescription: string, userSkil
             tip: 'Show a concrete learning plan with timeline',
         });
     } else {
-        const sit = QUESTION_TEMPLATES.situational[0];
-        questions.push({ question: sit.q, type: 'situational', tip: sit.tip });
+        const situational = QUESTION_TEMPLATES.situational;
+        if (situational.length > 0) {
+            const sit = situational[0];
+            questions.push({ question: sit.q, type: 'situational', tip: sit.tip });
+        }
     }
 
     // Unique: Role-specific question

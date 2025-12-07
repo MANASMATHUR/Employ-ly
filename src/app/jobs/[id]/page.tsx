@@ -208,7 +208,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
                                 <div className="text-center py-4">
                                     <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[var(--parrot)]/15 flex items-center justify-center text-[var(--parrot)] text-2xl">✓</div>
                                     <h3 className="font-semibold text-[var(--cream)] mb-1">Applied!</h3>
-                                    <p className="text-[var(--ash)] text-sm">They'll review your profile</p>
+                                    <p className="text-[var(--ash)] text-sm">They&apos;ll review your profile</p>
                                 </div>
                             ) : (
                                 <>

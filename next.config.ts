@@ -52,9 +52,10 @@ const nextConfig: NextConfig = {
   },
 
   // Turbopack configuration to silence lockfile warning
-  turbopack: {
-    root: __dirname,
-  },
+  // Note: root is optional and defaults to project root, so we don't need to set it
+  // turbopack: {
+  //   root: __dirname, // __dirname is not available in ES modules
+  // },
 };
 
 export default nextConfig;

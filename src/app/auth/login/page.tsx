@@ -91,7 +91,7 @@ export default function LoginPage() {
                     </form>
 
                     <p className="mt-8 text-center text-[var(--ash)] text-sm">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <Link href="/auth/register" className="text-[var(--ruby-soft)] hover:text-[var(--ruby)] font-medium transition-colors">
                             Sign up
                         </Link>

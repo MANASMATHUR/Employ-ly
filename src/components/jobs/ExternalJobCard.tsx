@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 interface ExternalJobCardProps {
     job: {
@@ -25,13 +25,19 @@ export default function ExternalJobCard({ job }: ExternalJobCardProps) {
         return `$${(job.budget.min / 1000).toFixed(0)}k–${(job.budget.max / 1000).toFixed(0)}k`;
     };
 
-    const timeAgo = (date: string) => {
-        const days = Math.floor((Date.now() - new Date(date).getTime()) / 86400000);
-        if (days === 0) return 'Today';
-        if (days === 1) return 'Yesterday';
-        if (days < 7) return `${days}d ago`;
-        return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    };
+    const [timeDisplay, setTimeDisplay] = useState<string>('');
+
+    useEffect(() => {
+        const calculateTimeAgo = () => {
+            const days = Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 86400000);
+            if (days === 0) return 'Today';
+            if (days === 1) return 'Yesterday';
+            if (days < 7) return `${days}d ago`;
+            return new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setTimeDisplay(calculateTimeAgo());
+    }, [job.createdAt]);
 
     const budget = formatBudget();
 
@@ -71,7 +77,7 @@ export default function ExternalJobCard({ job }: ExternalJobCardProps) {
                         <div className="flex items-center gap-2 text-xs text-[var(--ash)] mb-3">
                             <span className="font-medium text-[var(--stone)]">{job.poster.name}</span>
                             <span className="text-[var(--smoke)]">·</span>
-                            <span>{timeAgo(job.createdAt)}</span>
+                            <span>{timeDisplay}</span>
                             <span className="text-[var(--smoke)]">·</span>
                             <span>{job.location}</span>
                             {budget && (

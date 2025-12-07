@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
                     await ScrapedJob.create(jobData);
                     created++;
                 }
-            } catch (err) {
+            } catch {
                 skipped++;
             }
         }
@@ -174,9 +174,10 @@ export async function POST(request: NextRequest) {
             success: true,
             stats: { created, updated, skipped, total: jobs.length },
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Sync error:', error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return NextResponse.json({ success: false, error: message }, { status: 500 });
     }
 }
 
@@ -192,7 +193,7 @@ export async function GET(request: NextRequest) {
         const seniority = searchParams.get('seniority');
         const format = searchParams.get('format') || 'json';
 
-        const query: any = { 'labels.isValid': { $ne: false } };
+        const query: Record<string, any> = { 'labels.isValid': { $ne: false } };
         if (category) query.category = category;
         if (seniority) query.seniority = seniority;
 
@@ -234,8 +235,9 @@ export async function GET(request: NextRequest) {
             jobs,
             pagination: { total, skip, limit, hasMore: skip + limit < total },
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Get scraped jobs error:', error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return NextResponse.json({ success: false, error: message }, { status: 500 });
     }
 }

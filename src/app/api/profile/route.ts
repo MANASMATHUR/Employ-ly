@@ -4,6 +4,7 @@ import User from '@/models/User';
 import { getUserFromRequest } from '@/lib/auth';
 import { updateProfileSchema, validateRequest } from '@/lib/validations';
 import { sanitizeInput, sanitizeUrl, sanitizeWalletAddress, sanitizeStringArray } from '@/lib/sanitize';
+import { verifyMessage } from '@/lib/web3';
 import { formatErrorResponse, logger, NotFoundError, AuthenticationError } from '@/lib/errors';
 import { VALIDATION_LIMITS } from '@/lib/constants';
 
@@ -65,8 +66,8 @@ export async function PUT(request: NextRequest) {
         await connectDB();
 
         // Build update object with sanitization
-        const updateData: Record<string, any> = {};
-        
+        const updateData: Record<string, unknown> = {};
+
         if (name !== undefined) {
             updateData.name = sanitizeInput(name, VALIDATION_LIMITS.name.max);
         }
@@ -79,6 +80,18 @@ export async function PUT(request: NextRequest) {
         if (walletAddress !== undefined && walletAddress) {
             const sanitized = sanitizeWalletAddress(walletAddress);
             if (sanitized) {
+                // Verify signature if provided (SECURITY)
+                const { signature, message } = body;
+                if (signature && message) {
+                    const recoveredAddress = verifyMessage(message, signature);
+                    if (recoveredAddress.toLowerCase() !== sanitized.toLowerCase()) {
+                        return NextResponse.json(
+                            { success: false, error: 'Invalid wallet signature' },
+                            { status: 401 }
+                        );
+                    }
+                }
+
                 updateData.walletAddress = sanitized;
             } else {
                 return NextResponse.json(

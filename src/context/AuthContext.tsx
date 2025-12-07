@@ -33,11 +33,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Check for stored token on mount
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-            setToken(storedToken);
-            fetchUser(storedToken);
+        // Check for stored token on mount (only on client side)
+        if (typeof window !== 'undefined') {
+            const storedToken = localStorage.getItem('token');
+            if (storedToken) {
+                setToken(storedToken);
+                fetchUser(storedToken);
+            } else {
+                setIsLoading(false);
+            }
         } else {
             setIsLoading(false);
         }
@@ -48,15 +52,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const res = await fetch('/api/auth/me', {
                 headers: { Authorization: `Bearer ${authToken}` },
             });
-            if (res.ok) {
-                const data = await res.json();
+            const data = await res.json();
+            if (res.ok && data.success && data.user) {
                 setUser(data.user);
+                setToken(authToken);
             } else {
-                localStorage.removeItem('token');
+                // Token is invalid or expired
+                console.warn('Auth token validation failed:', data.error || 'Unknown error');
+                if (typeof window !== 'undefined') {
+                    localStorage.removeItem('token');
+                }
                 setToken(null);
+                setUser(null);
             }
         } catch (error) {
             console.error('Failed to fetch user:', error);
+            // On network error, clear auth state
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('token');
+            }
+            setToken(null);
+            setUser(null);
         } finally {
             setIsLoading(false);
         }
@@ -72,8 +88,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             const data = await res.json();
 
-            if (res.ok && data.success) {
-                localStorage.setItem('token', data.token);
+            if (res.ok && data.success && data.token) {
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('token', data.token);
+                }
                 setToken(data.token);
                 setUser(data.user);
                 return { success: true };
@@ -95,8 +113,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             const data = await res.json();
 
-            if (res.ok && data.success) {
-                localStorage.setItem('token', data.token);
+            if (res.ok && data.success && data.token) {
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('token', data.token);
+                }
                 setToken(data.token);
                 setUser(data.user);
                 return { success: true };
@@ -109,7 +129,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('token');
+        }
         setToken(null);
         setUser(null);
     };

@@ -145,7 +145,7 @@ export default function FeedPage() {
                 <div className="mb-8">
                     <span className="label">Community</span>
                     <h1 className="text-[var(--cream)] text-3xl font-bold mt-2 mb-3">
-                        What's happening
+                        What&apos;s happening
                     </h1>
                     <p className="text-[var(--ash)]">
                         Share updates, ask questions, help others.
@@ -173,8 +173,8 @@ export default function FeedPage() {
                                                 key={type.id}
                                                 onClick={() => setPostType(type.id)}
                                                 className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${postType === type.id
-                                                        ? 'bg-[var(--ruby)]/15 text-[var(--ruby-soft)]'
-                                                        : 'bg-[var(--charcoal)] text-[var(--ash)] hover:text-[var(--cream)]'
+                                                    ? 'bg-[var(--ruby)]/15 text-[var(--ruby-soft)]'
+                                                    : 'bg-[var(--charcoal)] text-[var(--ash)] hover:text-[var(--cream)]'
                                                     }`}
                                             >
                                                 {type.label}
@@ -251,8 +251,8 @@ export default function FeedPage() {
                                     <button
                                         onClick={() => handleLike(post._id)}
                                         className={`flex items-center gap-1.5 text-sm transition-colors ${user && post.likes.includes(user.id)
-                                                ? 'text-[var(--ruby)]'
-                                                : 'text-[var(--ash)] hover:text-[var(--ruby)]'
+                                            ? 'text-[var(--ruby)]'
+                                            : 'text-[var(--ash)] hover:text-[var(--ruby)]'
                                             }`}
                                     >
                                         <span>{user && post.likes.includes(user.id) ? '❤️' : '🤍'}</span>
