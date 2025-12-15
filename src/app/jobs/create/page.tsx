@@ -31,6 +31,8 @@ export default function CreateJobPage() {
     const [newSkill, setNewSkill] = useState('');
     const [newTag, setNewTag] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [extracting, setExtracting] = useState(false);
+    const [generatingDescription, setGeneratingDescription] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState<'idle' | 'paying' | 'paid' | 'error'>('idle');
     const [txHash, setTxHash] = useState('');
     const [error, setError] = useState('');
@@ -39,6 +41,56 @@ export default function CreateJobPage() {
         if (skill && !form.requiredSkills.includes(skill)) {
             setForm({ ...form, requiredSkills: [...form.requiredSkills, skill] });
             setNewSkill('');
+        }
+    };
+
+    const handleExtractSkills = async () => {
+        if (!form.description || !token) return;
+        setExtracting(true);
+        try {
+            const res = await fetch('/api/jobs/extract-skills', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ text: form.description }),
+            });
+            const data = await res.json();
+            if (data.success && data.skills) {
+                // Add new skills avoiding duplicates
+                const currentSkills = new Set(form.requiredSkills);
+                const newSkills = data.skills.filter((s: string) => !currentSkills.has(s));
+                if (newSkills.length > 0) {
+                    setForm(prev => ({
+                        ...prev,
+                        requiredSkills: [...prev.requiredSkills, ...newSkills]
+                    }));
+                }
+            }
+        } catch (err) {
+            console.error('Skill extraction failed', err);
+        } finally {
+            setExtracting(false);
+        }
+    };
+
+
+
+    const handleGenerateDescription = async () => {
+        if (!form.title || !token) return;
+        setGeneratingDescription(true);
+        try {
+            const res = await fetch('/api/jobs/generate-description', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ title: form.title }),
+            });
+            const data = await res.json();
+            if (data.success && data.description) {
+                setForm(prev => ({ ...prev, description: data.description }));
+            }
+        } catch (err) {
+            console.error('Description generation failed', err);
+        } finally {
+            setGeneratingDescription(false);
         }
     };
 
@@ -162,7 +214,16 @@ export default function CreateJobPage() {
                             </div>
 
                             <div>
-                                <label className="label block mb-2">Description *</label>
+                                <label className="label mb-2 flex items-center justify-between">
+                                    Description *
+                                    <button
+                                        onClick={handleGenerateDescription}
+                                        disabled={generatingDescription || !form.title}
+                                        className="text-xs px-3 py-1 rounded-lg bg-[var(--ruby)]/15 text-[var(--ruby-soft)] hover:bg-[var(--ruby)]/25 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {generatingDescription ? 'Generating...' : '✨ Generate with AI'}
+                                    </button>
+                                </label>
                                 <textarea
                                     value={form.description}
                                     onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -172,7 +233,16 @@ export default function CreateJobPage() {
                             </div>
 
                             <div>
-                                <label className="label block mb-2">Required Skills *</label>
+                                <label className="label mb-2 flex items-center justify-between">
+                                    Required Skills *
+                                    <button
+                                        onClick={handleExtractSkills}
+                                        disabled={extracting || !form.description}
+                                        className="text-xs px-3 py-1 rounded-lg bg-[var(--ruby)]/15 text-[var(--ruby-soft)] hover:bg-[var(--ruby)]/25 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {extracting ? 'Extracting...' : '✨ Extract from Description'}
+                                    </button>
+                                </label>
                                 <div className="flex flex-wrap gap-2 mb-3">
                                     {form.requiredSkills.map((skill) => (
                                         <span key={skill} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--ruby)]/15 text-[var(--ruby-soft)] text-sm">

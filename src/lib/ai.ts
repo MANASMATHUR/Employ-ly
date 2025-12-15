@@ -233,6 +233,44 @@ export async function getRecommendedJobs(
     return recommendations.sort((a, b) => b.score - a.score);
 }
 
+// Generate a job description from a title
+export async function generateJobDescription(title: string): Promise<string> {
+    try {
+        const client = getOpenAI();
+        const fallbackDescription = `We are looking for a skilled ${title} to join our team. You will be responsible for... (Please add more details)`;
+
+        if (!client) {
+            return fallbackDescription;
+        }
+
+        const response = await client.chat.completions.create({
+            model: 'gpt-3.5-turbo',
+            messages: [
+                {
+                    role: 'system',
+                    content: `You are a professional HR specialist. Write a compelling job description for the given job title.
+          Include:
+          - Brief role responsibilities
+          - Key requirements
+          - What makes the role exciting
+          Keep it professional but engaging. Use markdown formatting. Limit to 300 words.`,
+                },
+                {
+                    role: 'user',
+                    content: `Job Title: ${title}`,
+                },
+            ],
+            temperature: 0.7,
+            max_tokens: 600,
+        });
+
+        return response.choices[0]?.message?.content || fallbackDescription;
+    } catch (error) {
+        console.error('Job description generation error:', error);
+        return `We are looking for a skilled ${title} to join our team. (Generation failed, please fill in details)`;
+    }
+}
+
 // Smart job suggestions based on profile analysis
 export async function getSmartSuggestions(userBio: string, userSkills: string[]): Promise<string[]> {
     try {
