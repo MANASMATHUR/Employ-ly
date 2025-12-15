@@ -15,10 +15,10 @@ interface Post {
 }
 
 const POST_TYPES = [
-    { id: 'update', label: '📝 Update', desc: 'Share what you\'re working on' },
-    { id: 'question', label: '❓ Question', desc: 'Ask the community' },
-    { id: 'opportunity', label: '🚀 Opportunity', desc: 'Share a job or project' },
-    { id: 'advice', label: '💡 Advice', desc: 'Share your learnings' },
+    { id: 'update', label: ' Update', desc: 'Share what you\'re working on' },
+    { id: 'question', label: ' Question', desc: 'Ask the community' },
+    { id: 'opportunity', label: ' Opportunity', desc: 'Share a job or project' },
+    { id: 'advice', label: ' Advice', desc: 'Share your learnings' },
 ];
 
 export default function FeedPage() {

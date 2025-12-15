@@ -52,10 +52,7 @@ export default function ProfilePage() {
                     }
                 } catch (error) {
                     console.error("Signing failed", error);
-                    // Continue without signature? No, implementation plan implied strictness, but we can fallback or alert.
-                    // For now, let's just alert/log and not send walletAddress if signing fails to be safe? 
-                    // Or proceed and let backend reject if it enforces it.
-                    // Actually, let's just proceed. The backend will reject if it enforces it (which I added).
+
                 }
             } else if (address) {
                 body.walletAddress = address;
@@ -70,6 +67,8 @@ export default function ProfilePage() {
             if (data.success) {
                 updateUser(data.user);
                 setEditing(false);
+            } else {
+                alert(`Save failed: ${data.error}`);
             }
         } catch (err) {
             console.error(err);
@@ -219,7 +218,7 @@ export default function ProfilePage() {
                         About
                         {editing && (
                             <button onClick={extractSkills} disabled={extracting} className="text-xs px-3 py-1 rounded-lg bg-[var(--ruby)]/15 text-[var(--ruby-soft)] hover:bg-[var(--ruby)]/25 transition-colors disabled:opacity-50">
-                                {extracting ? 'Extracting...' : '✨ Extract skills with AI'}
+                                {extracting ? 'Extracting...' : ' Extract skills with AI'}
                             </button>
                         )}
                     </h2>

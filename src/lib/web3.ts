@@ -145,11 +145,24 @@ export async function sendPlatformFee(): Promise<{ success: boolean; txHash?: st
             success: true,
             txHash: receipt.transactionHash,
         };
-    } catch (error: unknown) {
-        console.error('Payment error:', error);
+    } catch (error: any) {
+        console.error('Payment error details:', {
+            message: error?.message,
+            code: error?.code,
+            data: error?.data,
+            stack: error?.stack,
+            fullError: error
+        });
+
+        // Try to extract a meaningful error message
+        let errorMessage = 'Transaction failed';
+        if (error?.reason) errorMessage = error.reason;
+        else if (error?.data?.message) errorMessage = error.data.message;
+        else if (error?.message) errorMessage = error.message;
+
         return {
             success: false,
-            error: error instanceof Error ? error.message : 'Transaction failed',
+            error: errorMessage,
         };
     }
 }

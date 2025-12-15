@@ -14,7 +14,7 @@ export default function NotFound() {
                         404
                     </span>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-6xl">🚀</span>
+                        <span className="text-6xl">*</span>
                     </div>
                 </div>
 

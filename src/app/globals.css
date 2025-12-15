@@ -10,7 +10,7 @@
   --parrot-soft: #69F0AE;
   --parrot-deep: #00A344;
 
-  /* Warm neutrals - not pure grays */
+  /* Warm neutrals  */
   --ink: #1A1518;
   --charcoal: #2D2529;
   --smoke: #3D3539;
@@ -50,7 +50,7 @@ body {
   line-height: 1.6;
 }
 
-/* Noise texture overlay for organic feel */
+/* Noise texture overlay */
 body::after {
   content: '';
   position: fixed;
@@ -61,7 +61,7 @@ body::after {
   z-index: 9999;
 }
 
-/* Ambient background - organic, not perfect circles */
+/* Ambient background */
 body::before {
   content: '';
   position: fixed;
@@ -139,7 +139,7 @@ body::before {
   }
 }
 
-/* Card - organic shadows, not perfectly rounded */
+/* Card  */
 .card {
   background: linear-gradient(165deg, var(--bg-raised) 0%, var(--bg) 100%);
   border: 1px solid rgba(255, 107, 138, 0.06);
@@ -159,7 +159,7 @@ body::before {
     0 0 0 1px rgba(227, 28, 88, 0.08);
 }
 
-/* Primary button - has character */
+/* Primary button  */
 .btn-primary {
   background: var(--ruby);
   color: white;

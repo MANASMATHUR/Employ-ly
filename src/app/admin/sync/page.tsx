@@ -55,10 +55,10 @@ export default function AdminSyncPage() {
                             disabled={status === 'loading'}
                             className="btn-primary disabled:opacity-50"
                         >
-                            {status === 'loading' ? 'Syncing...' : '🔄 Sync from RemoteOK'}
+                            {status === 'loading' ? 'Syncing...' : ' Sync from RemoteOK'}
                         </button>
                         <button onClick={exportCSV} className="btn-secondary">
-                            📥 Export CSV (Training Data)
+                             Export CSV (Training Data)
                         </button>
                     </div>
 
@@ -67,7 +67,7 @@ export default function AdminSyncPage() {
                         <div className={`mt-6 p-4 rounded-xl ${status === 'success' ? 'bg-[var(--parrot)]/10 text-[var(--parrot)]' : 'bg-[var(--ruby)]/10 text-[var(--ruby-soft)]'}`}>
                             {status === 'success' ? (
                                 <div>
-                                    <p className="font-medium mb-2">✅ Sync complete!</p>
+                                    <p className="font-medium mb-2"> Sync complete!</p>
                                     <div className="text-sm opacity-80">
                                         <span>Created: {result.stats?.created}</span>
                                         <span className="mx-2">•</span>
@@ -77,7 +77,7 @@ export default function AdminSyncPage() {
                                     </div>
                                 </div>
                             ) : (
-                                <p>❌ {result.error || 'Sync failed'}</p>
+                                <p> {result.error || 'Sync failed'}</p>
                             )}
                         </div>
                     )}

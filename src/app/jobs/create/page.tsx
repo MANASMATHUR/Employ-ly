@@ -274,8 +274,8 @@ export default function CreateJobPage() {
                                             key={type}
                                             onClick={() => setForm({ ...form, locationType: type })}
                                             className={`py-3 px-4 rounded-xl text-sm font-medium transition-all ${form.locationType === type
-                                                    ? 'bg-[var(--ruby)] text-white'
-                                                    : 'bg-[var(--charcoal)] text-[var(--ash)] hover:text-[var(--cream)]'
+                                                ? 'bg-[var(--ruby)] text-white'
+                                                : 'bg-[var(--charcoal)] text-[var(--ash)] hover:text-[var(--cream)]'
                                                 }`}
                                         >
                                             {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -343,10 +343,22 @@ export default function CreateJobPage() {
                                 <span className="text-[var(--parrot)] font-bold">0.00001 MATIC</span>
                             </div>
 
-                            {paymentStatus === 'idle' && (
-                                <button onClick={handlePayment} className="btn-primary w-full py-3">
-                                    {!isConnected ? 'Connect Wallet' : !isCorrectNetwork ? 'Switch to Polygon' : 'Pay with MetaMask'}
-                                </button>
+                            {['idle', 'error'].includes(paymentStatus) && (
+                                <>
+                                    <button onClick={handlePayment} className="btn-primary w-full py-3">
+                                        {!isConnected ? 'Connect Wallet' : !isCorrectNetwork ? 'Switch to Polygon' : 'Pay with MetaMask'}
+                                    </button>
+                                    <div className="mt-3 text-center">
+                                        <a
+                                            href="https://faucet.polygon.technology/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-xs text-[var(--ruby-soft)] hover:text-[var(--ruby)] underline transition-colors"
+                                        >
+                                            Need testnet funds? Get free MATIC here ↗
+                                        </a>
+                                    </div>
+                                </>
                             )}
 
                             {paymentStatus === 'paying' && (
