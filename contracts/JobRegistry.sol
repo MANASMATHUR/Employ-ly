@@ -46,7 +46,7 @@ contract EmploylyJobRegistry {
             isActive: true
         });
 
-        // Forward fee to owner (simplified for testnet)
+        // Forward fee to owner
         payable(owner).transfer(msg.value);
 
         emit JobPosted(jobId, msg.sender, contentHash);
