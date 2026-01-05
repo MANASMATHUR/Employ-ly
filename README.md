@@ -296,8 +296,8 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 Create a `.env.local` file in the root directory with the following variables:
 
 ```env
-# Database
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/employly
+# Database (replace with your actual MongoDB connection string)
+MONGODB_URI=mongodb+srv://<your-username>:<your-password>@<your-cluster>.mongodb.net/employly
 
 # Authentication
 JWT_SECRET=your-super-secret-jwt-key-min-32-characters
